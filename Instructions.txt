@@ -1,0 +1,38 @@
+*****DJANGO PROJECT SETUP INSTRUCTIONS*****
+1.Open terminal in the project root folder
+Then run: cd .\quoraProject\
+2.Activate environment
+pip3 install pipenv
+pipenv shell
+
+3.Install all required packages from requirements.txt
+pip install -r requirements.txt
+
+4.Create migrations for your app
+python manage.py makemigrations
+
+5.Create specific app migrations (if needed)
+
+python manage.py makemigrations quora
+
+6.Apply all migrations to the database
+
+python manage.py migrate
+
+7.Run the development server
+python manage.py runserver
+
+8.Access the app in browser
+Go to: http://127.0.0.1:8000
+
+******Signup and Login Flow*******
+
+You’ll land on the Login page.
+
+First, click on Sign up/Register to create a new user.
+
+After successful registration, it redirects to the Login page.
+
+Enter your credentials to log in.
+
+You’ll then be taken to the main application/dashboard.
