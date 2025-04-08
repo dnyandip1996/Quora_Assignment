@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ question.title }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle, rgba(213, 214, 214, 1) 0%, rgba(13, 165, 168, 1) 0%, rgba(5, 30, 52, 1) 100%);
+        }
+
+        h1 {
+            text-align: center;
+            background: linear-gradient(90deg, #948a88 0%, #441f1c 43%, #584947 100%);
+            color: #fff;
+            padding: 20px;
+            margin: 0;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        /* NAVBAR STYLING */
+        .navbar {
+            background: linear-gradient(90deg, #948a88 0%, #441f1c 43%, #584947 100%);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar .logo {
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .navbar-right a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .navbar-right a:hover {
+            text-decoration: underline;
+        }
+
+        .profile-container {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .profile-icon {
+            font-size: 24px;
+            color: white;
+        }
+
+        .dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 45px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            width: 180px;
+            z-index: 1;
+        }
+
+        .dropdown.show {
+            display: block;
+        }
+
+        .dropdown p {
+            margin: 0;
+            padding: 10px 15px;
+            font-weight: bold;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+
+        .dropdown a,
+        .dropdown form button {
+            display: block;
+            width: 100%;
+            padding: 10px 15px;
+            text-decoration: none;
+            font-family: inherit;
+            font-size: inherit;
+            color: #441f1c;
+            background: none;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .dropdown a:hover,
+        .dropdown form button:hover {
+            background: #f0f0f0;
+        }
+        .task-wrapper {
+            background-color: #fff;
+            margin: 30px auto;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 800px;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-title h3 {
+            margin: 0;
+        }
+
+        .task-link {
+            text-decoration: none;
+            color: #02172b;
+            font-weight: bold;
+            font-size: 22px;
+        }
+
+        .task-link:hover {
+            text-decoration: underline;
+        }
+
+        .answer-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        .answer-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+        }
+
+        .answer-content {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .answer-info {
+            font-size: 14px;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .like-button {
+            background: none;
+            border: none;
+            color: #441f1c;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .like-button i {
+            margin-right: 5px;
+        }
+
+        .like-button:hover {
+            text-decoration: underline;
+        }
+
+        .like-count {
+            font-weight: bold;
+            margin-left: 10px;
+            color: #584947;
+        }
+
+        form textarea, form input, form button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        form button {
+            background-color: #441f1c;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        form button:hover {
+            background-color: #584947;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #02172b;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .navbar-right {
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 10px;
+            }
+
+            .task-wrapper {
+                margin: 15px;
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .task-link {
+                font-size: 18px;
+            }
+        }
+    </style>
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById("profileDropdown");
+            dropdown.classList.toggle("show");
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.closest(".profile-container")) {
+                const dropdown = document.getElementById("profileDropdown");
+                if (dropdown && dropdown.classList.contains("show")) {
+                    dropdown.classList.remove("show");
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="{% url 'dashboard' %}" class="logo">Quora</a>
+    
+        <div class="navbar-right">
+            <a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> Home</a>
+            <a href="{% url 'ask_question' %}"><i class="fas fa-plus"></i> Ask</a>
+            <a href="{% url 'question_list' %}"><i class="fas fa-eye"></i> View</a>
+    
+            <div class="profile-container" onclick="toggleDropdown()">
+                <i class="fas fa-user-circle profile-icon"></i>
+                <div class="dropdown" id="profileDropdown">
+                    <p>{{ request.user.username }}</p>
+                    <form method="post" action="{% url 'user_logout' %}">
+                        {% csrf_token %}
+                        <button type="submit">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+<div class="task-wrapper">
+    <div class="task-title">
+        <h3><a class="task-link" href="{% url 'question_detail' question.id %}">{{ question.title }}</a></h3>
+    </div>
+
+    <h3>Answers:</h3>
+    <ul class="answer-list">
+        {% for answer in answers %}
+            <li class="answer-item">
+                <div class="answer-content">
+                    {{ answer.content }}
+                </div>
+                <div class="answer-info">
+                    <form method="post" action="{% url 'like_answer' answer.id %}">
+                        {% csrf_token %}
+                        {% if user.is_authenticated %}
+                            <button type="submit" class="like-button">
+                                {% if user in answer.likes.all %}
+                                    <i class="fas fa-thumbs-up"></i> Unlike
+                                {% else %}
+                                    <i class="far fa-thumbs-up"></i> Like
+                                {% endif %}
+                            </button>
+                        {% endif %}
+                        <span class="like-count">{{ answer.likes.count }} Likes</span>
+                    </form>
+                    <p>Answer by: {{ answer.user.username }}</p>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h3>Your Answer:</h3>
+    <form method="post" action="{% url 'answer_question' question.id %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit Answer</button>
+    </form>
+
+    <a class="back-link" href="{% url 'question_list' %}"><i class="fas fa-arrow-left"></i> Back to Questions</a>
+</div>
+
+</body>
+</html>

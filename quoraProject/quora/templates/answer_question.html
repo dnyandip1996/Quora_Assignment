@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Answer Question</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle, rgba(213, 214, 214, 1) 0%, rgba(13, 165, 168, 1) 0%, rgba(5, 30, 52, 1) 100%);
+            color: #333;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            background: linear-gradient(90deg, #948a88 0%, #441f1c 43%, #584947 100%);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar .logo {
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .navbar-right a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .navbar-right a:hover {
+            text-decoration: underline;
+        }
+
+        .profile-container {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .profile-icon {
+            font-size: 24px;
+            color: white;
+        }
+
+        .dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 45px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            width: 180px;
+            z-index: 1;
+        }
+
+        .dropdown.show {
+            display: block;
+        }
+
+        .dropdown p {
+            margin: 0;
+            padding: 10px 15px;
+            font-weight: bold;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+
+        .dropdown a,
+        .dropdown form button {
+            display: block;
+            width: 100%;
+            padding: 10px 15px;
+            text-decoration: none;
+            font-family: inherit;
+            font-size: inherit;
+            color: #441f1c;
+            background: none;
+            border: none;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .dropdown a:hover,
+        .dropdown form button:hover {
+            background: #f0f0f0;
+        }
+
+        h2 {
+            margin: 20px;
+            font-size: 24px;
+            color: #fff;
+        }
+
+        .answer-form {
+            background-color: #fff;
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .answer-form label {
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .answer-form textarea {
+            width: 97%;
+            padding: 12px;
+            margin-top: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .answer-form button {
+            background-color: #441f1c;
+            color: #fff;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .answer-form button:hover {
+            background-color: #584947;
+        }
+        .task-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #02172b;
+            font-weight: 500;
+        }
+        .task-link:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            .navbar-right {
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 10px;
+            }
+
+            .answer-form {
+                margin: 20px;
+                padding: 20px;
+            }
+        }
+    </style>
+
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById("profileDropdown");
+            dropdown.classList.toggle("show");
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.closest(".profile-container")) {
+                const dropdown = document.getElementById("profileDropdown");
+                if (dropdown && dropdown.classList.contains("show")) {
+                    dropdown.classList.remove("show");
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <a href="{% url 'dashboard' %}" class="logo">Quora</a>
+    <div class="navbar-right">
+        <a href="{% url 'dashboard' %}"><i class="fas fa-home"></i> Home</a>
+        <a href="{% url 'ask_question' %}"><i class="fas fa-plus"></i> Ask</a>
+        <a href="{% url 'question_list' %}"><i class="fas fa-eye"></i> View</a>
+
+        <div class="profile-container" onclick="toggleDropdown()">
+            <i class="fas fa-user-circle profile-icon"></i>
+            <div class="dropdown" id="profileDropdown">
+                <p>{{ request.user.username }}</p>
+                <form method="post" action="{% url 'user_logout' %}">
+                    {% csrf_token %}
+                    <button type="submit">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- PAGE CONTENT -->
+<h2>{{ question.title }}</h2>
+
+<div class="answer-form">
+    <form method="post">
+        {% csrf_token %}
+        <label for="{{ form.content.id_for_label }}">Your Answer:</label>
+        {{ form.content }}
+        <button type="submit">Submit Answer</button>
+        <a class="task-link" href="{% url 'question_detail' question.id %}"><i class="fas fa-arrow-left"></i> Back to Questions</a></a>
+    </form>
+</div>
+
+</body>
+</html>
